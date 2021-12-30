@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        html, body {
+            height: 100%;
+        }
+        textarea {
+            width: 100%;
+            height: 50%;
+        }
+        .title {
+            font-size: 2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="title">Case Converter</div>
+    <textarea></textarea>
+    <button id="upper-case">Upper Case</button>
+    <button id="lower-case">Lower Case</button>
+    <button id="proper-case">Proper Case</button>
+    <button id="sentence-case">Sentence Case</button>
+    <button id="save-text-file">Save Text File</button>
+
+<script>
+    function download(filename, text) {
+        let element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+    }
+
+    let tarea = document.querySelector('textarea');
+    document.getElementById('upper-case').addEventListener('click', function() {
+        tarea.value = tarea.value.toUpperCase();
+    });
+    document.getElementById('lower-case').addEventListener('click', function() {
+        tarea.value = tarea.value.toLowerCase();
+    });
+    document.getElementById('proper-case').addEventListener('click', function() {
+        let txt = tarea.value.toLowerCase().split(' ');
+        txt = txt.map(function (x) {
+            if(x) {
+                return x[0].toUpperCase() + x.substring(1);
+            }
+            return x;
+        });
+        tarea.value = txt.join(' ');
+    });
+    document.getElementById('sentence-case').addEventListener('click', function() {
+        let txt = tarea.value.toLowerCase().split('.');
+
+        txt = txt.map(function (x) {
+            x = x.trimLeft();
+
+            if(x) {
+                return x[0].toUpperCase() + x.substring(1);
+            }
+
+            return x;
+        });
+
+        tarea.value = txt.join('. ').trim();
+    });
+    document.getElementById('save-text-file').addEventListener('click', function () {
+        download('text.txt', tarea.value);
+    })
+</script>
+</body>
+</html>
