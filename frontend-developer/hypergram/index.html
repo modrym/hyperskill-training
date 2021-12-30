@@ -9,7 +9,7 @@
             font-family: sans-serif;
         }
 
-        canvas {
+        div#canvas {
             width: 75%;
             height: 100%;
         }
@@ -61,7 +61,9 @@
 <body>
 
 <div id="app">
-    <canvas></canvas>
+    <div id="canvas">
+        <canvas></canvas>
+    </div>
     <div id="panel">
         <div id="panel-inside">
             <input type="file" id="file-input">
@@ -75,6 +77,32 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('file-input').addEventListener('change', function (ev) {
+        if(ev.target.files) {
+            let file = ev.target.files[0];
+
+            var reader = new FileReader();
+
+            reader.readAsDataURL(file);
+
+            reader.onloadend = function (e) {
+                var image = new Image();
+                image.src = e.target.result;
+                
+                image.onload = function (ev) {
+                    var canvas = document.querySelector('canvas');
+                    canvas.width = image.width;
+                    canvas.height = image.height;
+
+                    var ctx = canvas.getContext('2d');
+                    ctx.drawImage(image, 0, 0);
+                }
+            }
+        }
+    });
+</script>
 
 </body>
 </html>
