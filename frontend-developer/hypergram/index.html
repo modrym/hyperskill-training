@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hypergram</title>
+    <style>
+        html, body {
+            height: 100%;
+            font-family: sans-serif;
+        }
+
+        canvas {
+            width: 75%;
+            height: 100%;
+        }
+
+        #panel {
+            width: 25%;
+            background: cornflowerblue;
+            height: 100%;
+            display: flex;
+        }
+
+        #panel-inside {
+            display: flex;
+            flex-flow: column;
+            width: 66%;
+            margin: auto;
+        }
+
+        #app {
+            display: flex;
+            height: 100%;
+        }
+
+        label, input, button {
+            width: 100%;
+        }
+
+        label {
+            margin-top: 5%;
+        }
+
+        input {
+            margin-bottom: 5%;
+        }
+
+        button {
+            margin-top: 10%;
+        }
+
+        #save-button {
+            margin-bottom: 10%;
+        }
+
+        label {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <canvas></canvas>
+    <div id="panel">
+        <div id="panel-inside">
+            <input type="file" id="file-input">
+            <label for="brightness">Brightness</label>
+            <input type="range" id="brightness">
+            <label for="contrast">Contrast</label>
+            <input type="range" id="contrast">
+            <label for="transparent">Transparent</label>
+            <input type="range" id="transparent">
+            <button id="save-button">SAVE IMAGE</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
