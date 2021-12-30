@@ -140,10 +140,27 @@
                     let ctx = canvas.getContext('2d');
                     ctx.drawImage(image, 0, 0);
 
+                    in_br.value = 0;
+                    in_co.value = 0;
+                    in_tr.value = 1;
+
                     canvas_image = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
                 }
             }
         }
+    });
+
+    document.getElementById('save-button').addEventListener('click', function () {
+        let imageData = canvas.toDataURL('image/png', 1);
+
+        let tmpLink = document.createElement('a');
+        tmpLink.download = 'result.png';
+        tmpLink.href = imageData;
+
+        // temporarily add link to body and initiate the download
+        document.body.appendChild(tmpLink);
+        tmpLink.click();
+        document.body.removeChild(tmpLink);
     });
 </script>
 
