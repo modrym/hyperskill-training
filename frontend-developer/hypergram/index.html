@@ -68,36 +68,79 @@
         <div id="panel-inside">
             <input type="file" id="file-input">
             <label for="brightness">Brightness</label>
-            <input type="range" id="brightness">
+            <input type="range" id="brightness" min="-255" max="255" step="1">
             <label for="contrast">Contrast</label>
-            <input type="range" id="contrast">
+            <input type="range" id="contrast" min="-128" max="128" step="1">
             <label for="transparent">Transparent</label>
-            <input type="range" id="transparent">
+            <input type="range" id="transparent" min="0" max="1" value="1" step="0.1">
             <button id="save-button">SAVE IMAGE</button>
         </div>
     </div>
 </div>
 
 <script>
+    function truncate(value) {
+        if(value < 0) return 0
+        if(value > 255) return 255
+        return value
+    }
+
+    let canvas = document.querySelector('canvas');
+    var canvas_image;
+
+    let in_br = document.getElementById('brightness');
+    let in_co = document.getElementById('contrast');
+    let in_tr = document.getElementById('transparent');
+
+    function update_imgdata() {
+        let ctx = canvas.getContext('2d');
+
+        let brightness = parseInt(in_br.value);
+        let contrast = parseInt(in_co.value);
+        let cfactor = 259 * (255 + contrast) / (255 * (259 - contrast));
+        let transparent = parseFloat(in_tr.value);
+
+        let pixels = new Uint8ClampedArray(canvas_image);
+
+        for(let i = 0; i <= pixels.length - 4; i += 4) {
+            pixels[i] = truncate(cfactor * (pixels[i] - 128) + 128 + brightness);
+            pixels[i + 1] = truncate(cfactor * (pixels[i + 1] - 128) + 128 + brightness);
+            pixels[i + 2] = truncate(cfactor * (pixels[i + 2] - 128) + 128 + brightness);
+            pixels[i + 3] = pixels[i + 3] * transparent;
+        }
+
+        let resulting_canvas = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        resulting_canvas.data.set(pixels);
+        ctx.putImageData(resulting_canvas, 0, 0);
+    }
+
+    in_br.addEventListener('input', update_imgdata);
+    in_co.addEventListener('input', update_imgdata);
+    in_tr.addEventListener('input', update_imgdata);
+    in_br.addEventListener('change', update_imgdata);
+    in_co.addEventListener('change', update_imgdata);
+    in_tr.addEventListener('change', update_imgdata);
+
     document.getElementById('file-input').addEventListener('change', function (ev) {
         if(ev.target.files) {
             let file = ev.target.files[0];
 
-            var reader = new FileReader();
+            let reader = new FileReader();
 
             reader.readAsDataURL(file);
 
             reader.onloadend = function (e) {
-                var image = new Image();
+                let image = new Image();
                 image.src = e.target.result;
                 
                 image.onload = function (ev) {
-                    var canvas = document.querySelector('canvas');
                     canvas.width = image.width;
                     canvas.height = image.height;
 
-                    var ctx = canvas.getContext('2d');
+                    let ctx = canvas.getContext('2d');
                     ctx.drawImage(image, 0, 0);
+
+                    canvas_image = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
                 }
             }
         }
