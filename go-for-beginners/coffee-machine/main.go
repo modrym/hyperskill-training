@@ -4,61 +4,117 @@ import (
 	"fmt"
 )
 
-const (
-	water       = 200
-	milk        = 50
-	coffeeBeans = 15
-)
-
-func min(nums ...uint) uint {
-	var minNum = nums[0]
-
-	for i := 1; i < len(nums); i++ {
-		if nums[i] < minNum {
-			minNum = nums[i]
-		}
-	}
-
-	return minNum
+type CoffeeMachine struct {
+	water, milk, coffeeBeans, cups, money uint
 }
 
-func getAvailableIngredients() (uint, uint, uint) {
-	var availableWater, availableMilk, availableCoffeeBeans uint
-
-	fmt.Println("Write how many ml of water the coffee machine has:")
-	fmt.Scan(&availableWater)
-	fmt.Println("Write how many ml of milk the coffee machine has:")
-	fmt.Scan(&availableMilk)
-	fmt.Println("Write how many grams of coffee beans the coffee machine has:")
-	fmt.Scan(&availableCoffeeBeans)
-
-	return availableWater, availableMilk, availableCoffeeBeans
+type Coffee struct {
+	water, milk, coffeeBeans, cost uint
 }
 
-func makeCoffee(cups uint, availableWater uint, availableMilk uint, availableCoffeeBeans uint) {
-	availableCups := min(availableWater/water, availableMilk/milk, availableCoffeeBeans/coffeeBeans)
+// recipes
+var espresso = Coffee{water: 250, milk: 0, coffeeBeans: 16, cost: 4}
+var latte = Coffee{water: 350, milk: 75, coffeeBeans: 20, cost: 7}
+var cappuccino = Coffee{water: 200, milk: 100, coffeeBeans: 12, cost: 6}
 
-	switch {
-	case availableCups == cups:
-		fmt.Println("Yes, I can make that amount of coffee")
-	case availableCups > cups:
-		fmt.Printf("Yes, I can make that amount of coffee (and even %d more than that)\n", availableCups-cups)
+func (cm *CoffeeMachine) doAction() {
+	fmt.Println("Write action (buy, fill, take)")
+
+	var action string
+	fmt.Scan(&action)
+
+	switch action {
+	case "buy":
+		cm.doBuy()
+	case "fill":
+		cm.doFill()
+	case "take":
+		cm.doTake()
 	default:
-		fmt.Printf("No, I can make only %d cups of coffee\n", availableCups)
+		fmt.Println("Wrong action. Available actions: buy, fill, take")
 	}
 }
 
-func specifyCups() uint {
-	fmt.Println("Write how many cups of coffee you will need:")
+func (cm *CoffeeMachine) doFill() {
+	var add uint
 
-	var cups uint
-	fmt.Scan(&cups)
+	fmt.Println("Write how many ml of water you want to add:")
+	fmt.Scan(&add)
+	cm.water += add
+	fmt.Println("Write how many ml of milk you want to add:")
+	fmt.Scan(&add)
+	cm.milk += add
+	fmt.Println("Write how many grams of coffee beans you want to add:")
+	fmt.Scan(&add)
+	cm.coffeeBeans += add
+	fmt.Println("Write how many disposable cups you want to add:")
+	fmt.Scan(&add)
+	cm.cups += add
+}
 
-	return cups
+func (cm *CoffeeMachine) doTake() {
+	fmt.Printf("I gave you $%d\n", cm.money)
+	cm.money = 0
+}
+
+func (cm *CoffeeMachine) doBuy() {
+	fmt.Println("What do you want to buy? " +
+		"1 - espresso, 2 - latte, 3 - cappuccino")
+
+	var choice int
+	var recipe *Coffee
+	fmt.Scan(&choice)
+
+	switch choice {
+	case 1:
+		recipe = &espresso
+	case 2:
+		recipe = &latte
+	case 3:
+		recipe = &cappuccino
+	default:
+		fmt.Println("Wrong type of coffee!")
+		return
+	}
+
+	cm.buyCoffee(recipe)
+}
+
+func (cm *CoffeeMachine) buyCoffee(coffee *Coffee) {
+	cm.water -= coffee.water
+	cm.milk -= coffee.milk
+	cm.coffeeBeans -= coffee.coffeeBeans
+	cm.money += coffee.cost
+	cm.cups--
+}
+
+func (cm *CoffeeMachine) printState() {
+	fmt.Printf("The coffee machine has:\n"+
+		"%d of water\n"+
+		"%d of milk\n"+
+		"%d of coffee beans\n"+
+		"%d of disposable cups\n"+
+		"%d of money\n",
+		cm.water,
+		cm.milk,
+		cm.coffeeBeans,
+		cm.cups,
+		cm.money)
 }
 
 func main() {
-	availableWater, availableMilk, availableCoffeeBeans := getAvailableIngredients()
-	cups := specifyCups()
-	makeCoffee(cups, availableWater, availableMilk, availableCoffeeBeans)
+	// initial state
+	cm := CoffeeMachine{
+		water:       400,
+		milk:        540,
+		coffeeBeans: 120,
+		cups:        9,
+		money:       550,
+	}
+
+	cm.printState()
+	fmt.Println()
+	cm.doAction()
+	fmt.Println()
+	cm.printState()
 }
