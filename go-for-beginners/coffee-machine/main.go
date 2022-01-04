@@ -16,6 +16,7 @@ type Coffee struct {
 var espresso = Coffee{water: 250, milk: 0, coffeeBeans: 16, cost: 4}
 var latte = Coffee{water: 350, milk: 75, coffeeBeans: 20, cost: 7}
 var cappuccino = Coffee{water: 200, milk: 100, coffeeBeans: 12, cost: 6}
+var hotWater = Coffee{water: 250, cost: 1}
 
 func (cm *CoffeeMachine) actionLoop() {
 	for cm.doAction() {
@@ -75,7 +76,7 @@ func (cm *CoffeeMachine) doTake() {
 func (cm *CoffeeMachine) doBuy() {
 	fmt.Println("What do you want to buy? " +
 		"1 - espresso, 2 - latte, 3 - cappuccino, " +
-		"back - to main menu")
+		"4 - hot water, back - to main menu")
 
 	var choice string
 	var recipe *Coffee
@@ -88,6 +89,8 @@ func (cm *CoffeeMachine) doBuy() {
 		recipe = &latte
 	case "3":
 		recipe = &cappuccino
+	case "4":
+		recipe = &hotWater
 	case "back":
 		return
 	default:
