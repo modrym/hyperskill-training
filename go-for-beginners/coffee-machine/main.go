@@ -17,11 +17,17 @@ var espresso = Coffee{water: 250, milk: 0, coffeeBeans: 16, cost: 4}
 var latte = Coffee{water: 350, milk: 75, coffeeBeans: 20, cost: 7}
 var cappuccino = Coffee{water: 200, milk: 100, coffeeBeans: 12, cost: 6}
 
-func (cm *CoffeeMachine) doAction() {
-	fmt.Println("Write action (buy, fill, take)")
+func (cm *CoffeeMachine) actionLoop() {
+	for cm.doAction() {
+	}
+}
+
+func (cm *CoffeeMachine) doAction() bool {
+	fmt.Println("Write action (buy, fill, take, remaining, exit)")
 
 	var action string
 	fmt.Scan(&action)
+	fmt.Println()
 
 	switch action {
 	case "buy":
@@ -30,9 +36,18 @@ func (cm *CoffeeMachine) doAction() {
 		cm.doFill()
 	case "take":
 		cm.doTake()
+	case "exit":
+		return false
+	case "remaining":
+		cm.printState()
 	default:
-		fmt.Println("Wrong action. Available actions: buy, fill, take")
+		fmt.Println("Wrong action. Available actions: " +
+			"buy, fill, take, remaining, exit")
 	}
+
+	fmt.Println()
+
+	return true
 }
 
 func (cm *CoffeeMachine) doFill() {
@@ -59,19 +74,22 @@ func (cm *CoffeeMachine) doTake() {
 
 func (cm *CoffeeMachine) doBuy() {
 	fmt.Println("What do you want to buy? " +
-		"1 - espresso, 2 - latte, 3 - cappuccino")
+		"1 - espresso, 2 - latte, 3 - cappuccino, " +
+		"back - to main menu")
 
-	var choice int
+	var choice string
 	var recipe *Coffee
 	fmt.Scan(&choice)
 
 	switch choice {
-	case 1:
+	case "1":
 		recipe = &espresso
-	case 2:
+	case "2":
 		recipe = &latte
-	case 3:
+	case "3":
 		recipe = &cappuccino
+	case "back":
+		return
 	default:
 		fmt.Println("Wrong type of coffee!")
 		return
@@ -80,7 +98,33 @@ func (cm *CoffeeMachine) doBuy() {
 	cm.buyCoffee(recipe)
 }
 
+func infoResourceShortage(resource string) {
+	fmt.Printf("Sorry, not enough %s!\n", resource)
+}
+
 func (cm *CoffeeMachine) buyCoffee(coffee *Coffee) {
+	if cm.water < coffee.water {
+		infoResourceShortage("water")
+		return
+	}
+
+	if cm.milk < coffee.milk {
+		infoResourceShortage("milk")
+		return
+	}
+
+	if cm.coffeeBeans < coffee.coffeeBeans {
+		infoResourceShortage("coffee beans")
+		return
+	}
+
+	if cm.cups == 0 {
+		infoResourceShortage("cups")
+		return
+	}
+
+	fmt.Println("I have enough resources, making you a coffee!")
+
 	cm.water -= coffee.water
 	cm.milk -= coffee.milk
 	cm.coffeeBeans -= coffee.coffeeBeans
@@ -112,9 +156,5 @@ func main() {
 		money:       550,
 	}
 
-	cm.printState()
-	fmt.Println()
-	cm.doAction()
-	fmt.Println()
-	cm.printState()
+	cm.actionLoop()
 }
