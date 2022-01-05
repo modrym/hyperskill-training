@@ -52,17 +52,31 @@ func (td *TabooDB) censorWord(word string) string {
 }
 
 func (td *TabooDB) inputLoop() {
-	var word string
+	var word, dot string
+	var wordsSplit []string
 
 	for {
-		fmt.Scan(&word)
+		fmt.Scanln(&word)
 
 		if word == "exit" {
 			fmt.Println("Bye!")
 			break
 		}
 
-		fmt.Println(td.censorWord(word))
+		if word[len(word)-1] == '.' {
+			dot = "."
+		} else {
+			dot = ""
+		}
+
+		word = strings.TrimRight(word, ".")
+		wordsSplit = strings.Split(word, " ")
+
+		for index, val := range wordsSplit {
+			wordsSplit[index] = td.censorWord(val)
+		}
+
+		fmt.Println(strings.Join(wordsSplit, " ") + dot)
 	}
 }
 
