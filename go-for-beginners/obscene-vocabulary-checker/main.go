@@ -2,14 +2,19 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
-	"io"
 	"log"
 	"os"
+	"strings"
 )
 
-func readFile() {
+const CensorString = "*"
+
+type TabooDB struct {
+	db map[string]struct{}
+}
+
+func (td *TabooDB) readPathFromInput() {
 	var path string
 	fmt.Scan(&path)
 
@@ -21,17 +26,48 @@ func readFile() {
 
 	scanner := bufio.NewScanner(file)
 
+	td.db = make(map[string]struct{})
+
 	for scanner.Scan() {
-		if err := scanner.Err(); err != nil {
-			if errors.Is(err, io.EOF) {
-				break
-			}
-			log.Fatal(err)
+		td.db[strings.ToLower(scanner.Text())] = struct{}{}
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (td *TabooDB) isTaboo(word string) bool {
+	_, ok := td.db[strings.ToLower(word)]
+
+	return ok
+}
+
+func (td *TabooDB) censorWord(word string) string {
+	if !td.isTaboo(word) {
+		return word
+	}
+
+	return strings.Repeat(CensorString, len(word))
+}
+
+func (td *TabooDB) inputLoop() {
+	var word string
+
+	for {
+		fmt.Scan(&word)
+
+		if word == "exit" {
+			fmt.Println("Bye!")
+			break
 		}
-		fmt.Println(scanner.Text())
+
+		fmt.Println(td.censorWord(word))
 	}
 }
 
 func main() {
-	readFile()
+	tabooWords := TabooDB{}
+	tabooWords.readPathFromInput()
+	tabooWords.inputLoop()
 }
