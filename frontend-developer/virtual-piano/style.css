@@ -1,0 +1,33 @@
+body, html {
+    background-color: darkslategray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-family: sans-serif;
+}
+
+.container {
+    background-color: white;
+    padding: 0;
+    font-size: 0;
+}
+
+kbd {
+    display: inline-block;
+    background-color: white;
+    width: 10vmin;
+    height: 35vmin;
+    border: 3px gray solid;
+    text-align: center;
+    font-size: 1rem;
+}
+
+/* This is done to move the character */
+kbd {
+    line-height: 8vmin;
+}
+kbd:before {
+    content: "\a\a\a";
+    white-space: pre;
+}
