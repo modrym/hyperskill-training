@@ -4,30 +4,77 @@ body, html {
     justify-content: center;
     align-items: center;
     height: 100%;
-    font-family: sans-serif;
 }
 
 .container {
     background-color: white;
     padding: 0;
     font-size: 0;
+    /*width: 77vmin;*/
+    /*height: 36vmin;*/
+    position: relative;
 }
 
 kbd {
+    font-family: sans-serif;
+}
+
+.white-keys kbd {
     display: inline-block;
     background-color: white;
     width: 10vmin;
     height: 35vmin;
-    border: 3px gray solid;
+    border: 0.5vmin gray solid;
     text-align: center;
     font-size: 1rem;
 }
 
-/* This is done to move the character */
-kbd {
-    line-height: 8vmin;
+.black-keys {
+    /*display: flex;*/
+    /*justify-content: space-between;*/
+    width: 77vmin;
+    position: absolute;
+    top: 0;
 }
-kbd:before {
+
+.white-keys {
+    position: relative;
+}
+
+.black-keys kbd {
+    display: inline-block;
+    background-color: black;
+    width: 7vmin;
+    height: 20vmin;
+    text-align: center;
+    font-size: 1rem;
+    color: white;
+}
+
+/* Positions of black keys */
+.black-keys kbd {
+    margin-left: 0;
+    margin-right: 4vmin;
+}
+.black-keys kbd:first-child {
+    margin-left: 7.5vmin;
+}
+.black-keys kbd:nth-child(3) {
+    margin-left: 11vmin;
+}
+
+/* This is done to move the character */
+.white-keys kbd {
+    line-height: 9vmin;
+}
+.white-keys kbd:before {
+    content: "\a\a\a";
+    white-space: pre;
+}
+.black-keys kbd {
+    line-height: 4vmin;
+}
+.black-keys kbd:before {
     content: "\a\a\a";
     white-space: pre;
 }
