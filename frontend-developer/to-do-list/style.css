@@ -1,0 +1,73 @@
+html {
+    font-family: sans-serif;
+}
+
+#task-list {
+    list-style: none inside;
+    padding: 0;
+}
+
+#task-list li {
+    padding: 1vmin;
+    display: flex;
+}
+
+.task {
+    width: 100%;
+    display: inline-block;
+}
+
+.delete-btn {
+    float: right;
+    border: none;
+    background-color: red;
+    border-radius: 100%;
+    padding: 0;
+    color: white;
+    width: 1.5em;
+    height: 1.5em;
+    font-family: monospace;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color .1s;
+}
+
+.delete-btn:hover {
+    background-color: darkred;
+}
+
+.delete-btn:active {
+    background-color: orange;
+}
+
+.delete-btn:before {
+    content: "×";
+}
+
+#input-task, #add-task-button {
+    height: 4vmin;
+}
+
+#add-task-button {
+    display: inline-block;
+    background-color: rebeccapurple;
+    border: none;
+    color: white;
+    width: 20%;
+    float: right;
+}
+
+#input-task {
+    width: 70%;
+    margin-left: 1.5vmin;
+    border: 0;
+    border-bottom: purple solid 2px;
+}
+
+main, header {
+    width: 80vmin;
+}
+
+header {
+    text-align: center;
+}
