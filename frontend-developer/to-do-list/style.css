@@ -8,7 +8,7 @@ html {
 }
 
 #task-list li {
-    padding: 1vmin;
+    padding: 2vmin;
     display: flex;
 }
 
@@ -21,7 +21,7 @@ html {
     float: right;
     border: none;
     background-color: red;
-    border-radius: 100%;
+    border-radius: 50%;
     padding: 0;
     color: white;
     width: 1.5em;
@@ -44,8 +44,15 @@ html {
     content: "×";
 }
 
+#input-label {
+    text-align: center;
+    display: block;
+}
+
 #input-task, #add-task-button {
-    height: 4vmin;
+    height: 5vmin;
+    box-sizing: border-box;
+    margin: 0;
 }
 
 #add-task-button {
@@ -54,7 +61,12 @@ html {
     border: none;
     color: white;
     width: 20%;
-    float: right;
+    transition: background-color .1s;
+    cursor: pointer;
+}
+
+#add-task-button:hover {
+    background-color: black;
 }
 
 #input-task {
