@@ -24,8 +24,16 @@ function addTask(text) {
     let span = document.createElement('span');
     span.innerText = text;
     span.className = "task";
+
     let chBox = document.createElement('input');
     chBox.type = "checkbox";
+    chBox.addEventListener('input', function (e) {
+        if(e.target.checked) {
+            span.classList.add("task-done");
+        } else {
+            span.classList.remove("task-done");
+        }
+    });
 
     let delBtn = document.createElement('button');
     delBtn.className = "delete-btn";
