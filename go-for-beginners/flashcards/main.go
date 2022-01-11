@@ -5,8 +5,13 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
+
+type Question struct {
+	term, definition string
+}
 
 func readValue(reader *bufio.Reader) string {
 	line, err := reader.ReadString('\n')
@@ -21,11 +26,34 @@ func readValue(reader *bufio.Reader) string {
 func main() {
 	reader := bufio.NewReader(os.Stdin)
 
-	readValue(reader) // discard one value
+	fmt.Println("Input the number of cards:")
+	number, err := strconv.Atoi(readValue(reader))
 
-	if readValue(reader) == readValue(reader) {
-		fmt.Println("Your answer is right!")
-	} else {
-		fmt.Println("Your answer is wrong...")
+	if err != nil {
+		log.Fatal("the number is incorrect")
+	}
+
+	db := make([]Question, 0, number)
+
+	// DB creation stage
+	for i := 1; i <= number; i++ {
+		fmt.Printf("The term for card #%d:\n", i)
+		term := readValue(reader)
+
+		fmt.Printf("The definition for card #%d:\n", i)
+		definition := readValue(reader)
+
+		db = append(db, Question{term, definition})
+	}
+
+	// test stage
+	for _, val := range db {
+		fmt.Printf("Print the definition of \"%s\":\n", val.term)
+
+		if readValue(reader) == val.definition {
+			fmt.Println("Correct!")
+		} else {
+			fmt.Printf("Wrong. The right answer is \"%s\".\n", val.definition)
+		}
 	}
 }
