@@ -9,9 +9,64 @@ import (
 	"strings"
 )
 
+type any = interface{}
+
+type customLogger struct {
+	builder strings.Builder
+}
+
+var Log customLogger
+
+func (l *customLogger) Print(s string) {
+	l.builder.WriteString(s)
+	fmt.Print(s)
+}
+
+func (l *customLogger) Println(s string) {
+	l.builder.WriteString(s + "\n")
+	fmt.Println(s)
+}
+
+func (l *customLogger) Printf(s string, args ...any) {
+	s = fmt.Sprintf(s, args...)
+	l.builder.WriteString(s)
+	fmt.Print(s)
+}
+
+func (l *customLogger) Printfln(s string, args ...any) {
+	s = fmt.Sprintf(s+"\n", args...)
+	l.builder.WriteString(s)
+	fmt.Print(s)
+}
+
+func (l *customLogger) SaveFile(name string) error {
+	file, err := os.OpenFile(name, os.O_WRONLY|os.O_CREATE, 0644)
+
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	writer := bufio.NewWriter(file)
+	_, err = writer.WriteString(l.builder.String())
+
+	err = writer.Flush()
+
+	if err != nil {
+		return err
+	}
+
+	return file.Close()
+}
+
+type Def struct {
+	word     string
+	mistakes int
+}
+
 type Qdb struct {
 	reader             *bufio.Reader
-	dbTermToDefinition map[string]string
+	dbTermToDefinition map[string]Def
 }
 
 func (q *Qdb) readValue() string {
@@ -27,7 +82,7 @@ func (q *Qdb) readValue() string {
 func NewQdb() *Qdb {
 	q := Qdb{}
 	q.reader = bufio.NewReader(os.Stdin)
-	q.dbTermToDefinition = make(map[string]string)
+	q.dbTermToDefinition = make(map[string]Def)
 
 	return &q
 }
@@ -39,7 +94,7 @@ func (q *Qdb) getUniqueValue(valueName string, checkDuplicateFunc func(string) b
 		value = q.readValue()
 
 		if checkDuplicateFunc(value) {
-			fmt.Printf("The %s \"%s\" already exists. Try again:\n", valueName, value)
+			Log.Printf("The %s \"%s\" already exists. Try again:\n", valueName, value)
 			continue
 		}
 
@@ -49,8 +104,8 @@ func (q *Qdb) getUniqueValue(valueName string, checkDuplicateFunc func(string) b
 	return value
 }
 
-func (q *Qdb) dbAddQuestion(term, definition string) {
-	q.dbTermToDefinition[term] = definition
+func (q *Qdb) dbAddQuestion(term, definition string, mistakes int) {
+	q.dbTermToDefinition[term] = Def{definition, mistakes}
 }
 
 func (q *Qdb) dbRemoveQuestion(term string) bool {
@@ -64,78 +119,80 @@ func (q *Qdb) dbRemoveQuestion(term string) bool {
 }
 
 func (q *Qdb) actionAdd() {
-	fmt.Println("The card:")
+	Log.Println("The card:")
 
 	term := q.getUniqueValue("card", func(s string) bool {
 		_, ok := q.dbTermToDefinition[s]
 		return ok
 	})
 
-	fmt.Println("The definition of the card:")
+	Log.Println("The definition of the card:")
 
 	definition := q.getUniqueValue("definition", func(s string) bool {
 		for _, value := range q.dbTermToDefinition {
-			if s == value {
+			if s == value.word {
 				return true
 			}
 		}
 		return false
 	})
 
-	q.dbAddQuestion(term, definition)
+	q.dbAddQuestion(term, definition, 0)
 
-	fmt.Printf("The pair (\"%s\":\"%s\") has been added.\n", term, definition)
+	Log.Printf("The pair (\"%s\":\"%s\") has been added.\n", term, definition)
 }
 
 func (q *Qdb) actionRemove() {
-	fmt.Println("Which card?")
+	Log.Println("Which card?")
 
 	term := q.readValue()
 	if !q.dbRemoveQuestion(term) {
-		fmt.Println("Can't remove \"%s\": there is no such card.", term)
+		Log.Printf("Can't remove \"%s\": there is no such card.\n", term)
 		return
 	}
 
-	fmt.Println("The card has been removed.")
+	Log.Println("The card has been removed.")
 
 }
 
 func (q *Qdb) actionImport() {
-	fmt.Println("File name:")
+	Log.Println("File name:")
 
 	fname := q.readValue()
 
 	file, err := os.Open(fname)
 
 	if err != nil {
-		if os.IsExist(err) {
-			fmt.Println("File not found.")
-			return
-		}
-		fmt.Printf("Error opening the file: %s\n", err)
+		Log.Println("File not found.")
 	}
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
 
 	lineNo := 0
-	twoLines := make([]string, 2, 2)
+	threeLines := make([]string, 3, 3)
 
 	for scanner.Scan() {
-		twoLines[lineNo%2] = strings.TrimSpace(scanner.Text())
+		threeLines[lineNo%3] = strings.TrimSpace(scanner.Text())
 
-		if lineNo%2 == 1 {
-			q.dbAddQuestion(twoLines[0], twoLines[1])
+		if lineNo%3 == 1 {
+			mistakes, err := strconv.Atoi(threeLines[2])
+
+			if err != nil {
+				mistakes = 0
+			}
+
+			q.dbAddQuestion(threeLines[0], threeLines[1], mistakes)
 		}
 
 		lineNo++
 	}
 
-	fmt.Printf("%d cards have been loaded.\n", (lineNo+1)/2)
+	Log.Printf("%d cards have been loaded.\n", (lineNo+1)/3)
 }
 
 func (q *Qdb) actionExport() {
-	fmt.Println("File name:")
+	Log.Println("File name:")
 
 	fname := q.readValue()
 
@@ -143,63 +200,136 @@ func (q *Qdb) actionExport() {
 	defer file.Close()
 
 	if err != nil {
-		fmt.Println("Could not save the file.")
+		Log.Println("Could not save the file.")
 		return
 	}
 
 	writer := bufio.NewWriter(file)
 
 	for key, value := range q.dbTermToDefinition {
-		writer.WriteString(key + "\n" + value + "\n")
+		writer.WriteString(key + "\n" + value.word + "\n" + strconv.Itoa(value.mistakes) + "\n")
 	}
 
 	if writer.Flush() != nil || file.Close() != nil {
-		fmt.Println("Could not save the file.")
+		Log.Println("Could not save the file.")
 		return
 	}
 
-	fmt.Printf("%d cards have been saved.", len(q.dbTermToDefinition))
+	Log.Printf("%d cards have been saved.", len(q.dbTermToDefinition))
 }
 
 func (q *Qdb) actionAsk() {
-	fmt.Println("How many times to ask?")
+	Log.Println("How many times to ask?")
 	number, err := strconv.Atoi(q.readValue())
 
 	if err != nil {
-		fmt.Println("Wrong number.")
+		Log.Println("Wrong number.")
 		return
 	}
 
-	for key, value := range q.dbTermToDefinition {
-		if number <= 0 {
-			break
-		}
-
-		fmt.Printf("Print the definition of \"%s\":\n", key)
-
-		answer := q.readValue()
-
-		if answer == value {
-			fmt.Println("Correct!")
-		} else {
-			fmt.Printf("Wrong. The right answer is \"%s\"", value)
-
-			for _, otherValue := range q.dbTermToDefinition {
-				if otherValue == answer {
-					fmt.Printf(", but your definition is correct for \"%s\"", otherValue)
-					break
-				}
+	for number > 0 {
+		for key, value := range q.dbTermToDefinition {
+			if number <= 0 {
+				break
 			}
-			fmt.Println(".")
+
+			Log.Printf("Print the definition of \"%s\":\n", key)
+
+			answer := q.readValue()
+
+			if answer == value.word {
+				Log.Println("Correct!")
+			} else {
+				Log.Printf("Wrong. The right answer is \"%s\"", value.word)
+				value.mistakes++
+				q.dbTermToDefinition[key] = value
+
+				for _, otherValue := range q.dbTermToDefinition {
+					if otherValue.word == answer {
+						Log.Printf(", but your definition is correct for \"%s\"", otherValue.word)
+						break
+					}
+				}
+				Log.Println(".")
+			}
+
+			number--
+		}
+	}
+}
+
+func (q *Qdb) actionLog() {
+	Log.Println("File name:")
+
+	fileName := q.readValue()
+
+	err := Log.SaveFile(fileName)
+	if err == nil {
+		Log.Println("The log has been saved.")
+	} else {
+		Log.Printfln("Error: %s", err)
+	}
+}
+
+func (q *Qdb) actionHardestCard() {
+	var biggest struct {
+		words    []string
+		mistakes int
+	}
+
+	for key, value := range q.dbTermToDefinition {
+		if len(biggest.words) == 0 {
+			biggest.words = append(biggest.words, key)
+			biggest.mistakes = value.mistakes
+			continue
 		}
 
-		number--
+		if biggest.mistakes < value.mistakes {
+			biggest.mistakes = value.mistakes
+			biggest.words = append([]string(nil), value.word)
+		} else if biggest.mistakes == value.mistakes {
+			biggest.words = append(biggest.words, value.word)
+		}
 	}
+
+	if biggest.mistakes == 0 {
+		Log.Println("There are no cards with errors.")
+		return
+	}
+
+	Log.Print("The hardest card")
+
+	if len(biggest.words) == 1 {
+		Log.Print(" is \"")
+	} else {
+		Log.Print("s are \"")
+	}
+
+	Log.Printf("%s\". You have %d errors answering ",
+		strings.Join(biggest.words, "\", \""), biggest.mistakes)
+
+	if len(biggest.words) == 1 {
+		Log.Println("it.")
+	} else {
+		Log.Println("them.")
+	}
+
+}
+
+func (q *Qdb) actionResetStats() {
+	for key, value := range q.dbTermToDefinition {
+		value.mistakes = 0
+
+		q.dbTermToDefinition[key] = value
+	}
+
+	Log.Println("Card statistics have been reset.")
 }
 
 func (q *Qdb) ActionLoop() {
 	for {
-		fmt.Println("Input the action (add, remove, import, export, ask, exit):")
+		Log.Println("Input the action (add, remove, import, export, ask, " +
+			"exit, log, hardest card, reset stats):")
 
 		switch q.readValue() {
 		case "add":
@@ -210,14 +340,22 @@ func (q *Qdb) ActionLoop() {
 			q.actionImport()
 		case "export":
 			q.actionExport()
+		case "ask":
+			q.actionAsk()
+		case "log":
+			q.actionLog()
+		case "hardest card":
+			q.actionHardestCard()
+		case "reset stats":
+			q.actionResetStats()
 		case "exit":
-			fmt.Println("Bye bye!")
+			Log.Println("Bye bye!")
 			return
 		default:
-			fmt.Println("Wrong command!")
+			Log.Println("Wrong command!")
 		}
 
-		fmt.Println()
+		Log.Println("")
 	}
 }
 
