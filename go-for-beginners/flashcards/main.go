@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -67,6 +68,7 @@ type Def struct {
 type Qdb struct {
 	reader             *bufio.Reader
 	dbTermToDefinition map[string]Def
+	exportTo           *string
 }
 
 func (q *Qdb) readValue() string {
@@ -83,6 +85,20 @@ func NewQdb() *Qdb {
 	q := Qdb{}
 	q.reader = bufio.NewReader(os.Stdin)
 	q.dbTermToDefinition = make(map[string]Def)
+
+	importFrom := flag.String("import_from", "",
+		"File to import the cards from at the beginning.")
+	q.exportTo = flag.String("export_to", "",
+		"File to export the cards to at the end.")
+	flag.Parse()
+
+	if *importFrom != "" {
+		if lineNo, err := q.fileImport(*importFrom); err != nil {
+			Log.Println("The import file does not exist.")
+		} else {
+			Log.Printf("%d cards have been loaded.\n", lineNo)
+		}
+	}
 
 	return &q
 }
@@ -160,10 +176,18 @@ func (q *Qdb) actionImport() {
 
 	fname := q.readValue()
 
+	if lineNo, err := q.fileImport(fname); err != nil {
+		Log.Println("File not found.")
+	} else {
+		Log.Printf("%d cards have been loaded.\n", lineNo)
+	}
+}
+
+func (q *Qdb) fileImport(fname string) (int, error) {
 	file, err := os.Open(fname)
 
 	if err != nil {
-		Log.Println("File not found.")
+		return 0, err
 	}
 	defer file.Close()
 
@@ -188,7 +212,7 @@ func (q *Qdb) actionImport() {
 		lineNo++
 	}
 
-	Log.Printf("%d cards have been loaded.\n", (lineNo+1)/3)
+	return (lineNo + 1) / 3, nil
 }
 
 func (q *Qdb) actionExport() {
@@ -196,12 +220,19 @@ func (q *Qdb) actionExport() {
 
 	fname := q.readValue()
 
+	if q.fileExport(fname) != nil {
+		Log.Println("Could not save the file.")
+	} else {
+		Log.Printf("%d cards have been saved.", len(q.dbTermToDefinition))
+	}
+}
+
+func (q *Qdb) fileExport(fname string) error {
 	file, err := os.OpenFile(fname, os.O_CREATE|os.O_WRONLY, 0644)
 	defer file.Close()
 
 	if err != nil {
-		Log.Println("Could not save the file.")
-		return
+		return err
 	}
 
 	writer := bufio.NewWriter(file)
@@ -210,12 +241,15 @@ func (q *Qdb) actionExport() {
 		writer.WriteString(key + "\n" + value.word + "\n" + strconv.Itoa(value.mistakes) + "\n")
 	}
 
-	if writer.Flush() != nil || file.Close() != nil {
-		Log.Println("Could not save the file.")
-		return
+	if err := writer.Flush(); err != nil {
+		return err
 	}
 
-	Log.Printf("%d cards have been saved.", len(q.dbTermToDefinition))
+	if err := file.Close(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (q *Qdb) actionAsk() {
@@ -326,6 +360,14 @@ func (q *Qdb) actionResetStats() {
 	Log.Println("Card statistics have been reset.")
 }
 
+func (q *Qdb) actionExit() {
+	if err := q.fileExport(*q.exportTo); err != nil {
+		Log.Println("Could not save the file.")
+	} else {
+		Log.Printf("%d cards have been saved.", len(q.dbTermToDefinition))
+	}
+}
+
 func (q *Qdb) ActionLoop() {
 	for {
 		Log.Println("Input the action (add, remove, import, export, ask, " +
@@ -350,6 +392,7 @@ func (q *Qdb) ActionLoop() {
 			q.actionResetStats()
 		case "exit":
 			Log.Println("Bye bye!")
+			q.actionExit()
 			return
 		default:
 			Log.Println("Wrong command!")
