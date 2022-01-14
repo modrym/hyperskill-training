@@ -6,14 +6,15 @@
     <link href="style.css" rel="stylesheet">
 </head>
 <body>
-    <div class="space">
-        <div class="planet-area">
-            <img class="planet" src="https://stepik.org/media/attachments/lesson/452681/mars.png" alt="Planet">
-            <img class="rocket" src="https://stepik.org/media/attachments/lesson/452681/rocket.png" alt="Rocket">
-        </div>
-        <div class="control-panel">
-            <input type="text">
-            <input type="button" value="OK">
+<div class="space">
+    <div class="planet-area">
+        <img class="planet" src="https://stepik.org/media/attachments/lesson/452681/mars.png" alt="Planet">
+        <img class="rocket" src="https://stepik.org/media/attachments/lesson/452681/rocket.png" alt="Rocket">
+    </div>
+    <div class="control-panel">
+        <div class="control-panel__inner">
+            <input class="password-input" type="password" placeholder="Enter password to unlock">
+            <input class="ok-button" type="button" value="OK">
 
             <div class="check-buttons">
                 <input type="checkbox">
@@ -24,14 +25,15 @@
                 <input type="checkbox">
             </div>
             <div class="levers">
-                <input type="range" orient="vertical">
-                <input type="range">
-                <input type="range">
-                <input type="range">
-                <input type="range">
+                <label><input type="range"></label>
+                <label><input type="range"></label>
+                <label><input type="range"></label>
+                <label><input type="range"></label>
+                <label><input type="range"></label>
             </div>
-            <input type="button" value="Launch">
+            <input class="launch-button" type="button" value="Launch">
         </div>
     </div>
+</div>
 </body>
 </html>

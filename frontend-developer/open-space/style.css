@@ -1,5 +1,6 @@
 html, body {
     background: black;
+    font-family: sans-serif;
 }
 
 .space {
@@ -31,9 +32,53 @@ html, body {
     max-height: 30vh;
 }
 
-.control-panel * {
+.control-panel {
+    background: yellow linear-gradient(45deg, black 25%, transparent 25%, transparent 50%, black 50%, black 75%, transparent 75%);
+    background-size: 10vmin 10vmin;
+    position: absolute;
+    top: 40vmin;
+    right: 26vmin;
+    text-align: center;
+    padding: 3vmin;
+}
+
+.control-panel__inner>* {
     margin-top: 1vmin;
     margin-bottom: 1vmin;
+}
+
+.control-panel__inner {
+    background: #363636;
+    width: 40vmin;
+}
+
+.ok-button {
+    background: yellow;
+    border: none;
+    border-radius: 20px;
+}
+
+.password-input {
+    border: yellow 1px solid;
+    border-radius: 10px;
+    background: none;
+    color: white;
+    margin-top: 5vmin;
+}
+
+.launch-button {
+    background: red;
+    border: 1px solid white;
+    border-radius: 100px;
+    color: white;
+    height: 5vmin;
+    width: 10vmin;
+    margin-bottom: 5vmin;
+}
+
+.check-buttons {
+    display: flex;
+    justify-content: space-around;
 }
 
 .levers {
@@ -42,26 +87,17 @@ html, body {
     width: 40vmin;
 }
 
-.control-panel {
-    position: absolute;
-    top: 40vmin;
-    right: 30vmin;
-    text-align: center;
-    background: #363636;
-    width: 40vmin;
-}
-
-.check-buttons {
-    display: flex;
-    justify-content: space-around;
+.levers label {
+    display: inline-block;
+    padding: 0;
+    width: 8vmin;
+    height: 20vmin;
 }
 
 .levers input {
     transform: rotate(-90deg);
-    /*flex-shrink: 1;*/
-    /*flex: 1 1 auto;*/
-    height: 20vmin;
+    transform-origin: 10vmin 10vmin;
+    height: 8vmin;
     width: 20vmin;
-    margin-left: -6vmin;
-    margin-right: -6vmin;
+    margin: 0;
 }
