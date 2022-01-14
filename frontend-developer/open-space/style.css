@@ -76,6 +76,10 @@ html, body {
     margin-bottom: 5vmin;
 }
 
+.launch-button:disabled {
+    background: gray;
+}
+
 .check-buttons {
     display: flex;
     justify-content: space-around;
