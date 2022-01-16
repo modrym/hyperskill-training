@@ -1,0 +1,167 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Lora', serif;
+}
+
+header {
+    background: url("images/bg.jpg");
+    background-size: 100vw;
+    height: 100vh;
+    color: #CCD1D4;
+}
+
+header h1 {
+    position: absolute;
+    bottom: 100px;
+    left: 150px;
+    font-size: 50px;
+}
+
+nav {
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    height: 60px;
+    background-color: #1E1010;
+}
+
+nav ul {
+    list-style-type: none;
+    width: 50%;
+    height: 60px;
+    float: right;
+    display: flex;
+    justify-content: space-around;
+}
+
+nav ul li {
+    display: block;
+    height: 60px;
+    line-height: 60px;
+    vertical-align: middle;
+    text-align: center;
+    flex-grow: 1;
+}
+
+nav ul li a {
+    display: block;
+    height: 100%;
+    width: 100%;
+    color: #CCD1D4;
+    text-decoration: none;
+    transition: color 0.5s, background-color 0.5s;
+}
+
+nav ul li a:hover {
+    color: #1E1010;
+    background-color: #CCD1D4;
+}
+
+#about {
+    background-color: #CBD1D4;
+    height: 100vh;
+    position: relative;
+    padding-left: 65vw;
+    padding-top: 30vh;
+    padding-right: 11vw;
+}
+
+#about h2 {
+    margin-left: 1vw;
+    margin-bottom: 5vh;
+}
+
+#about #profile {
+    width: 300px;
+    position: absolute;
+    left: 400px;
+    top: 200px;
+}
+
+#about .bg {
+    width: 500px;
+    height: 375px;
+    background: url("images/image.jpg") -100px;
+    background-size: 700px;
+    position: absolute;
+    top: 100px;
+    left: 100px;
+}
+
+#portfolio {
+    background-color: #F3F5F8;
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#portfolio div {
+    width: 850px;
+}
+
+#portfolio figure {
+    background-color: white;
+    width: 400px;
+    text-align: center;
+    display: inline-block;
+}
+
+#portfolio img {
+    width: 400px;
+}
+
+#portfolio figcaption {
+    margin-bottom: 10px;
+}
+
+#contacts {
+    height: 30vh;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+#contacts img {
+    width: 30px;
+}
+
+#portfolio h2,
+#contacts h2 {
+    text-transform: uppercase;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+#portfolio,
+#contacts {
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+footer {
+    background-color: black;
+    color: white;
+    height: 20vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+footer {
+    font-family: 'Cormorant Garamond', serif;
+}
+
+footer .name {
+    font-size: 20px;
+}
+
+footer .date {
+    font-size: 16px;
+}
