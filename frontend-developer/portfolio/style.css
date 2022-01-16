@@ -7,11 +7,74 @@ body {
     font-family: 'Lora', serif;
 }
 
+#popup {
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    z-index: 10;
+
+    /* no window at the beginning */
+    display: none;
+}
+
+#popup-bg {
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    background-color: black;
+    z-index: 15;
+    opacity: 0.3;
+}
+
+#popup .window {
+    background-color: white;
+    width: 50vw;
+    height: 50vh;
+    z-index: 20;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    border: 5px black solid;
+    border-radius: 10px;
+    box-shadow: 0 0 40px 1px black;
+    color: gray;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 50px;
+}
+
+#popup-text {
+    height: 25vh;
+    overflow: auto;
+    text-align: center;
+    font-family: sans-serif;
+}
+
+#popup-text p {
+    margin-bottom: 10px;
+}
+
+#popup .window .close {
+    width: 100px;
+    height: 40px;
+    background-color: black;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-family: sans-serif;
+    cursor: pointer;
+}
+
 header {
     background: url("images/bg.jpg");
     background-size: 100vw;
     height: 100vh;
     color: #CCD1D4;
+    position: relative;
 }
 
 header h1 {
@@ -115,8 +178,15 @@ nav ul li a:hover {
     width: 400px;
 }
 
-#portfolio figcaption {
+#portfolio button.open-window {
+    margin-top: 10px;
     margin-bottom: 10px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    cursor: pointer;
 }
 
 #contacts {

@@ -8,12 +8,22 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300&family=Playfair+Display&display=swap" rel="stylesheet"
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300&family=Playfair+Display&display=swap"
+          rel="stylesheet">
 
     <!-- Styles -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<div id="popup">
+    <div id="popup-bg"></div>
+    <div class="window">
+        <h1></h1>
+        <div id="popup-text"></div>
+        <button class="close">Close</button>
+    </div>
+</div>
 
 <header id="header">
     <nav>
@@ -45,10 +55,24 @@
         <figure>
             <img src="images/project1.png" alt="Flashcards">
             <figcaption>Flashcards</figcaption>
+            <button class="open-window">More info</button>
+            <div style="display: none">
+                <div>Flashcards</div>
+                <div><p>You can see the project at the following link: <a href="#">flashcards</a>.</p>
+                    <p>Here is some description for the project. Here is some description for the project. Here is some
+                        description for the project.</p></div>
+            </div>
         </figure>
         <figure>
             <img src="images/project2.png" alt="Virtual Piano">
             <figcaption>Virtual Piano</figcaption>
+            <button class="open-window">More info</button>
+            <div style="display: none">
+                <div>Virtual Piano</div>
+                <div><p>You can see the project at the following link: <a href="#">virtual piano</a>.</p>
+                    <p>Here is some description for the project. Here is some description for the project. Here is some
+                        description for the project.</p></div>
+            </div>
         </figure>
     </div>
 </section>
@@ -56,7 +80,7 @@
 <section id="contacts">
     <h2>Contacts</h2>
 
-    <p>You can contact me at <a href="mailto:test@example.com">test@example.com</a><br />
+    <p>You can contact me at <a href="mailto:test@example.com">test@example.com</a><br/>
         or phone number - <a href="#">123456789</a></p>
     <p><img src="images/github.svg" alt="GitHub">
         <img src="images/facebook.svg" alt="Facebook">
@@ -64,6 +88,6 @@
         <img src="images/instagram%201.svg" alt="Instagram"></p>
 </section>
 <footer><span class="name">JANE DOE</span><span class="date">2022</span></footer>
-
+<script src="script.js"></script>
 </body>
 </html>
