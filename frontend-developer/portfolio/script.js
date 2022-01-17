@@ -51,12 +51,35 @@ window.onload = function () {
     let openWindowFunc = function () {
         let sbl = this.nextSibling;  // text
         sbl = sbl.nextSibling;  // div
-        console.log(sbl);
         let title = sbl.children[0].innerHTML;
         let text = sbl.children[1].innerHTML;
         popupShow(title, text);
     }
     btns.forEach(function (btn) {
         btn.addEventListener('click', openWindowFunc);
+    });
+
+    // this is for showing hamburger menu
+    let hamburgerIcon = document.querySelector('.hamburger-icon');
+    let hamburgerMenu = document.querySelector('ul.hamburger');
+    hamburgerIcon.addEventListener('click', function () {
+        if(hamburgerIcon.classList.toggle('clicked')) {
+            hamburgerMenu.style.display = 'inline-block';
+            hamburgerMenu.animate([
+                {opacity: 0},
+                {opacity: 1}
+            ], {
+                duration: 500
+            });
+        } else {
+            hamburgerMenu.animate([
+                {opacity: 1},
+                {opacity: 0}
+            ], {
+                duration: 500
+            }).onfinish = function () {
+                hamburgerMenu.style.display = 'none';
+            };
+        }
     });
 }

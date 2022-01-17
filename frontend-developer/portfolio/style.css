@@ -69,6 +69,18 @@ body {
     cursor: pointer;
 }
 
+@media only screen and (min-width: 801px) {
+    .hamburger {
+        display: none !important;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    .non-hamburger {
+        display: none !important;
+    }
+}
+
 header {
     background: url("images/bg.jpg");
     background-size: 100vw;
@@ -84,23 +96,117 @@ header h1 {
     font-size: 50px;
 }
 
+/*icon related styles*/
+.hamburger-icon {
+    width: 35px;
+    height: 40px;
+    float: right;
+    display: inline-block;
+    margin-top: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+    position: relative;
+    z-index: 10;
+}
+
+.hamburger-bar1,
+.hamburger-bar2,
+.hamburger-bar3 {
+    height: 4px;
+    width: 30px;
+    background-color: #CCD1D4;
+    position: absolute;
+    transition: transform 0.5s,
+    transform-origin 0.5s,
+    opacity 0.5s,
+    top 0.5s,
+    bottom 0.5s,
+    background-color 0.5s;
+    border-radius: 2px;
+}
+
+.hamburger-bar1 {
+    top: 7px;
+}
+
+.hamburger-bar2 {
+    top: 18px;
+}
+
+.hamburger-bar3 {
+    bottom: 7px;
+}
+
+.clicked .hamburger-bar1,
+.clicked .hamburger-bar2,
+.clicked .hamburger-bar3 {
+    background-color: #1E1010;
+}
+
+.clicked .hamburger-bar1 {
+    transform: rotate(45deg);
+    transform-origin: center;
+    top: 18px;
+}
+
+.clicked .hamburger-bar3 {
+    transform: rotate(-45deg);
+    transform-origin: center;
+    bottom: 18px;
+}
+
+.clicked .hamburger-bar2 {
+    opacity: 0;
+}
+/*icon related styles*/
+
+/* hamburger menu items */
+ul.hamburger {
+    background-color: #CCD1D4;
+    /*display: inline-block;*/
+    display: none;
+    text-align: center;
+    padding-top: 60px;
+    position: absolute;
+    right: 0;
+}
+
+ul.hamburger li {
+    list-style: none;
+}
+
+ul.hamburger a {
+    padding: 10px;
+    display: block;
+    text-decoration: none;
+    color: #1E1010;
+    transition: color 0.5s, background-color 0.5s;
+}
+
+ul.hamburger a:hover {
+    background-color: #1E1010;
+    color: #CCD1D4;
+}
+/* hamburger menu items */
+
 nav {
     text-transform: uppercase;
     letter-spacing: 5px;
     height: 60px;
     background-color: #1E1010;
+    position: relative;
 }
 
-nav ul {
+nav .non-hamburger {
     list-style-type: none;
-    width: 50%;
+    width: 640px;
     height: 60px;
     float: right;
     display: flex;
     justify-content: space-around;
 }
 
-nav ul li {
+nav .non-hamburger li {
     display: block;
     height: 60px;
     line-height: 60px;
@@ -109,7 +215,7 @@ nav ul li {
     flex-grow: 1;
 }
 
-nav ul li a {
+nav .non-hamburger li a {
     display: block;
     height: 100%;
     width: 100%;
@@ -118,7 +224,7 @@ nav ul li a {
     transition: color 0.5s, background-color 0.5s;
 }
 
-nav ul li a:hover {
+nav .non-hamburger li a:hover {
     color: #1E1010;
     background-color: #CCD1D4;
 }
